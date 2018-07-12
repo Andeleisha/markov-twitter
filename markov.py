@@ -60,11 +60,11 @@ def make_text(chains):
         words.append(word)
         key = (key[1], word)
 
-    print(" ".join(words))
+    #print(" ".join(words))
     return " ".join(words)
 
 
-def tweet(final_text):
+def tweet(chains):
     """Create a tweet and send it to the Internet."""
 
     # Use Python os.environ to get at environmental variables
@@ -75,7 +75,35 @@ def tweet(final_text):
                       access_token_key=os.environ["TWITTER_ACCESS_TOKEN_KEY"],
                       access_token_secret=os.environ["TWITTER_ACCESS_TOKEN_SECRET"])
     
-    status = api.PostUpdate(final_texts)
+    
+
+    while True:
+
+        tweet_text = make_text(chains)
+
+        last_tweet = api.GetUserTimeline(screen_name="hbmarkovyanda", count=1)
+
+        tweets = [i.AsDict() for i in last_tweet]
+
+        print("Your last tweet: ")
+        print(tweets[0]["text"])
+
+        print()
+
+        tweet_again = input("Enter to tweet again [q to quit]" )
+
+        status = api.PostUpdate(tweet_text)
+
+        print("Posted! ")
+        print()
+
+        if tweet_again == "q":
+            break
+
+
+
+
+
 
 
 # Get the filenames from the user through a command line prompt, ex:
@@ -90,7 +118,7 @@ chains = make_chains(text)
 
 final_text = make_text(chains)
 
-tweet(final_text)
+tweet(chains)
 
 # Your task is to write a new function tweet, that will take chains as input
 # tweet(chains)
